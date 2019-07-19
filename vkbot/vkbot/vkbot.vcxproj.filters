@@ -33,6 +33,9 @@
     <ClCompile Include="http\uri.cpp">
       <Filter>Исходные файлы\http</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="http\http.h">
