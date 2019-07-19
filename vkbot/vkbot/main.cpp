@@ -45,6 +45,13 @@ std::string failed(json& responce, json& lpg, int& ts) {
 
 int main() {
 
+	http::Request r;
+	r.uri = http::Uri("http://isinkin-bot-api.herokuapp.com/1/talk?q=pososi");
+	r.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101 Firefox/68.0";
+	r.headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+	r.headers["Accept-Encoding: gzip, deflate, br"];
+	//auto res = http::sendHTTPS(r);
+
 	auto lpg = get_long_poll_server();
 	int ts = std::stoi(lpg["ts"].get<std::string>());
 
@@ -66,12 +73,16 @@ int main() {
 			continue;
 		}
 
+		
 		for (auto& update : response["updates"])
 				if (update["type"].get<std::string>() == "message_new") {
 					std::string text = update["object"]["text"].get<std::string>();
 					long long peer_id = update["object"]["peer_id"].get<long long>();
 					std::cout << peer_id << " : " << text << std::endl;
-					apisay(text, std::to_string(peer_id));
+
+					auto resp = http::get("https://isinkin-bot-api.herokuapp.com/1/talk?q=pososi");
+
+					apisay(resp.Body(), std::to_string(peer_id));
 				}
 	}
 

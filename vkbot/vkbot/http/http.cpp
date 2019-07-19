@@ -144,8 +144,8 @@ namespace http {
 		ss << request.method << " /" << request.uri.path() + "?" + request.uri.args() << " HTTP/1.1\n";
 		ss << "Host: " << request.uri.host() << "\n";
 		ss << "Content-Length: " << request.body.size() << "\n";
-		ss << "Connection: close\n";
-		ss << "Accept-Encoding: identity\n";
+		//ss << "Connection: close\n";
+		//ss << "Accept-Encoding: identity\n";
 		for (auto header : request.headers) {
 			ss << header.first << ": " << header.second << "\n";
 		}
