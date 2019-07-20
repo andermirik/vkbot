@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\DetroitLen\Documents\GitHub\vkbot\vkbot\vkbot\json;C:\OpenSSL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\andermirik\Documents\GitHub\vkbot\vkbot\vkbot\json;C:\OpenSSL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\OpenSSL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

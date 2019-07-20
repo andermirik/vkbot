@@ -8,16 +8,20 @@
 #include <codecvt>
 
 using namespace std::string_literals;
+using json = nlohmann::json;
 
-int sinkinTest(int count) {
-	int res = 0;
-	for (int i = 0; i < count; i++) {
-		auto resp = http::get("https://isinkin-bot-api.herokuapp.com/1/talk?q=привет");
-		std::cout << i << std::endl;
-		if (resp.Status_code() == 200)
-			res++;
+std::string call_sinkin_api(std::string text) {
+	if (text != "") {
+		auto resp = http::get("https://isinkin-bot-api.herokuapp.com/1/talk?q=" + text);
+		if (resp.Status_code() == 200) {
+			std::string answer = json::parse(resp.Body())["text"].get<std::string>();
+			return answer;
+		}
+		else {
+			return u8"@isinkin(Синкин) обосрался: " + std::to_string(resp.Status_code());
+		}
 	}
-	return res;
+	return "";
 }
 
 std::vector<std::string> split(const std::string& s, char seperator)
@@ -49,15 +53,45 @@ std::string char2hex(const char dec) {
 	return r;
 }
 
-using namespace std::string_literals;
-std::string to_utf8(const std::string& str, const std::locale& loc = std::locale{}) {
-	using wcvt = std::wstring_convert<std::codecvt_utf8<int32_t>, int32_t>;
-	std::u32string wstr(str.size(), U'\0');
-	std::use_facet<std::ctype<char32_t>>(loc).widen(str.data(), str.data() + str.size(), &wstr[0]);
-	return wcvt{}.to_bytes(
-		reinterpret_cast<const int32_t*>(wstr.data()),
-		reinterpret_cast<const int32_t*>(wstr.data() + wstr.size())
-	);
+static void cp1251_to_utf8(char *out, const char *in) {
+	static const int table[128] = {
+		0x82D0,0x83D0,0x9A80E2,0x93D1,0x9E80E2,0xA680E2,0xA080E2,0xA180E2,
+		0xAC82E2,0xB080E2,0x89D0,0xB980E2,0x8AD0,0x8CD0,0x8BD0,0x8FD0,
+		0x92D1,0x9880E2,0x9980E2,0x9C80E2,0x9D80E2,0xA280E2,0x9380E2,0x9480E2,
+		0,0xA284E2,0x99D1,0xBA80E2,0x9AD1,0x9CD1,0x9BD1,0x9FD1,
+		0xA0C2,0x8ED0,0x9ED1,0x88D0,0xA4C2,0x90D2,0xA6C2,0xA7C2,
+		0x81D0,0xA9C2,0x84D0,0xABC2,0xACC2,0xADC2,0xAEC2,0x87D0,
+		0xB0C2,0xB1C2,0x86D0,0x96D1,0x91D2,0xB5C2,0xB6C2,0xB7C2,
+		0x91D1,0x9684E2,0x94D1,0xBBC2,0x98D1,0x85D0,0x95D1,0x97D1,
+		0x90D0,0x91D0,0x92D0,0x93D0,0x94D0,0x95D0,0x96D0,0x97D0,
+		0x98D0,0x99D0,0x9AD0,0x9BD0,0x9CD0,0x9DD0,0x9ED0,0x9FD0,
+		0xA0D0,0xA1D0,0xA2D0,0xA3D0,0xA4D0,0xA5D0,0xA6D0,0xA7D0,
+		0xA8D0,0xA9D0,0xAAD0,0xABD0,0xACD0,0xADD0,0xAED0,0xAFD0,
+		0xB0D0,0xB1D0,0xB2D0,0xB3D0,0xB4D0,0xB5D0,0xB6D0,0xB7D0,
+		0xB8D0,0xB9D0,0xBAD0,0xBBD0,0xBCD0,0xBDD0,0xBED0,0xBFD0,
+		0x80D1,0x81D1,0x82D1,0x83D1,0x84D1,0x85D1,0x86D1,0x87D1,
+		0x88D1,0x89D1,0x8AD1,0x8BD1,0x8CD1,0x8DD1,0x8ED1,0x8FD1
+	};
+	while (*in)
+		if (*in & 0x80) {
+			int v = table[(int)(0x7f & *in++)];
+			if (!v)
+				continue;
+			*out++ = (char)v;
+			*out++ = (char)(v >> 8);
+			if (v >>= 16)
+				*out++ = (char)v;
+		}
+		else
+			*out++ = *in++;
+	*out = 0;
+}
+
+
+std::string to_utf8(const std::string& str) {
+	char*out = new char[3*str.size()+1];
+	cp1251_to_utf8(out, str.c_str());
+	return std::string(out);
 }
 
 std::string to_ascii(std::string utf8s) {
@@ -94,8 +128,6 @@ std::string urlencode(const std::string &url) {
 
 	return escaped;
 }
-
-using json = nlohmann::json;
 
 json apisay(std::string text, std::string peer_id, std::string attachment="", std::string keyboard = "{\"buttons\":[],\"one_time\":true}") {
 	std::string token;
@@ -134,13 +166,21 @@ std::string failed(json& responce, json& lpg, int& ts) {
 	}
 	return "";
 }
+std::vector<std::string> bot_names = {"ня", "десу", "nya", "desu"};
+bool have_bot_name(std::string& text) {
+	for (auto& word : split(text, ' ')) {
+		for(auto& name: bot_names)
+			if (word == name) {
+				return true;
+			}
+	}
+	return false;
+}
 
 int main() {
 	system("chcp 1251");
 	system("cls");
 	setlocale(LC_ALL, "rus");
-
-	//std::cout << sinkinTest(15)<<std::endl;
 
 	auto lpg = get_long_poll_server();
 	int ts = std::stoi(lpg["ts"].get<std::string>());
@@ -162,33 +202,21 @@ int main() {
 			std::cout << "========================" << std::endl;
 			continue;
 		}
-		bool for_me = false;
-		int length_words = 0;
+
 		for (auto& update : response["updates"])
 				if (update["type"].get<std::string>() == "message_new") {
+					bool for_me = false;
+
 					std::string text = to_ascii(update["object"]["text"].get<std::string>().c_str());
 					long long peer_id = update["object"]["peer_id"].get<long long>();
-
 					std::cout << peer_id << " : " <<  text << std::endl;
-					auto words = split(text, ' ');
-					for (auto word : words)
-						if (word == "ня" || word == "десу" || word == "nya" || word == "desu") {
-							for_me = true;
-						}
-					
-					if (for_me) {
-						std::cout << text.substr(length_words) << std::endl;
-						std::cout << "https://isinkin-bot-api.herokuapp.com/1/talk?q=" + update["object"]["text"].get<std::string>() << std::endl;
-						auto resp = http::get("https://isinkin-bot-api.herokuapp.com/1/talk?q="+text);
-						if (resp.Status_code() == 200) {
-							std::cout << text.substr(length_words);
-							std::string answer = json::parse(resp.Body())["text"].get<std::string>();
-							apisay(answer, std::to_string(peer_id));
-						}
-						else {
-							apisay(u8"Синкин обосрался: " + std::to_string(resp.Status_code()), std::to_string(peer_id));
-						}
-					}
+
+					if (peer_id < 2000000000)
+						for_me = true;
+					else
+						for_me = have_bot_name(text);
+					if(for_me)
+						apisay(call_sinkin_api(urlencode(to_utf8(text))), std::to_string(peer_id));
 				}
 	}
 
