@@ -48,7 +48,6 @@ namespace http {
 			return Response();
 		}
 		std::string req = str(request);
-
 		addrinfo* pAddrInfo;
 		getaddrinfo(request.uri.host().c_str(), "443", 0, &pAddrInfo);
 
@@ -141,15 +140,15 @@ namespace http {
 
 	std::string str(Request& request) {
 		std::stringstream ss;
-		ss << request.method << " /" << request.uri.path() + "?" + request.uri.args() << " HTTP/1.1\n";
-		ss << "Host: " << request.uri.host() << "\n";
-		ss << "Content-Length: " << request.body.size() << "\n";
-		//ss << "Connection: close\n";
-		//ss << "Accept-Encoding: identity\n";
+		ss << request.method << " /" << request.uri.path() + "?" + request.uri.args() << " HTTP/1.1\r\n";
+		ss << "Host: " << request.uri.host() << "\r\n";
+		ss << "Content-Length: " << request.body.size() << "\r\n";
+		ss << "Connection: close\r\n";
+		ss << "Accept-Encoding: identity\r\n";
 		for (auto header : request.headers) {
-			ss << header.first << ": " << header.second << "\n";
+			ss << header.first << ": " << header.second << "\r\n";
 		}
-		ss << "\n";
+		ss << "\r\n";
 		ss << request.body;
 		return ss.str();
 	}
