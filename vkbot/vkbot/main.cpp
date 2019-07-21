@@ -8,6 +8,8 @@
 #include <codecvt>
 #include <set>
 
+
+
 using namespace std::string_literals;
 using json = nlohmann::json;
 
@@ -88,8 +90,6 @@ static void cp1251_to_utf8(char *out, const char *in) {
 			*out++ = *in++;
 	*out = 0;
 }
-
-
 std::string to_utf8(const std::string& str) {
 	char*out = new char[3*str.size()+1];
 	cp1251_to_utf8(out, str.c_str());
@@ -216,12 +216,13 @@ int main() {
 	system("chcp 1251");
 	system("cls");
 	setlocale(LC_ALL, "rus");
+
 	auto lpg = get_long_poll_server();
 	int ts = std::stoi(lpg["ts"].get<std::string>());
 
 	std::map<long long, std::set<long long>> ids = restore_session();
 	std::map<long long, bool> chat_working;
-	
+
 	while (true) {
 		auto resp = http::post(lpg["server"].get<std::string>(),
 			"act=a_check&key="
@@ -244,7 +245,7 @@ int main() {
 			save_session(ids);
 			std::cout << "saving..."<<std::endl;
 		}
-		std::string prev_text = "";
+
 		for (auto& update : response["updates"])
 				if (update["type"].get<std::string>() == "message_new") {
 					bool for_me = false;
@@ -253,7 +254,6 @@ int main() {
 					long long peer_id = update["object"]["peer_id"].get<long long>();
 					long long from_id = update["object"]["from_id"].get<long long>();
 
-					std::cout << "text:" << text << " " << prev_text << std::endl;
 					if(peer_id != from_id && from_id > 0)
 						ids[peer_id].insert(from_id);
 
@@ -297,7 +297,6 @@ int main() {
 						if (text == "работает")
 							apisay(to_utf8("не работает!))"), std::to_string(peer_id));
 					}
-				prev_text = text;
 				}
 	}
 

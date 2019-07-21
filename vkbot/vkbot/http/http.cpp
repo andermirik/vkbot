@@ -13,6 +13,8 @@
 #include <iostream>
 #include <sstream>
 
+
+
 namespace http {
 
 
@@ -66,7 +68,7 @@ namespace http {
 		SSL_library_init();
 		SSLeay_add_ssl_algorithms();
 		SSL_load_error_strings();
-
+		
 		const SSL_METHOD *meth = TLSv1_2_client_method();
 		SSL_CTX *ctx = SSL_CTX_new(meth);
 
@@ -94,6 +96,11 @@ namespace http {
 			if (bytes_recv > 0)
 				result.append(buffer, bytes_recv);
 		} while (bytes_recv > 0);
+
+		closesocket(connection);
+		SSL_shutdown(ssl);
+		SSL_free(ssl);
+		SSL_CTX_free(ctx);
 
 		return Response(result);
 	}
@@ -135,6 +142,7 @@ namespace http {
 				result.append(buffer, bytes_recv);
 		} while (bytes_recv > 0);
 
+		closesocket(connection);
 		return Response(result);
 	}
 
