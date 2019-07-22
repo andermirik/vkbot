@@ -125,17 +125,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Attachment.cpp" />
     <ClCompile Include="http\http.cpp" />
     <ClCompile Include="http\request.cpp" />
     <ClCompile Include="http\responce.cpp" />
     <ClCompile Include="http\uri.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Attachment.h" />
     <ClInclude Include="http\http.h" />
     <ClInclude Include="http\request.h" />
     <ClInclude Include="http\responce.h" />
     <ClInclude Include="http\uri.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
