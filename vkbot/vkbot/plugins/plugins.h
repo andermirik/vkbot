@@ -1,35 +1,14 @@
 #pragma once
-#include <string>
-#include <vector>
-#include "../Utils.h"
+#include "plugin.h"
+#include "plugin_f.h"
+#include "plugin_stat.h"
 
-class ApiSayObj {
+class PluginManager {
 public:
-	std::string text;
-	std::string attachment;
-	std::string keyboard; 
-	ApiSayObj() {
-		text = "";
-		attachment = "";
-		keyboard = "{\"buttons\":[],\"one_time\":true}";
+	std::vector<std::unique_ptr<Plugin>> plugins;
+	PluginManager() {
+		plugins.push_back(std::make_unique<Plugin>(Plugin({ "default", "plugin" }, true)));
+		plugins.push_back(std::make_unique<StatPlugin>(StatPlugin({ "status" }, true)));
+		plugins.push_back(std::make_unique<FPlugin>(FPlugin({ "F" }, false)));
 	}
-	ApiSayObj(std::string text, std::string attachment = "", std::string keyboard = "{\"buttons\":[],\"one_time\":true}") {
-		this->text = text;
-		this->attachment = attachment;
-		this->keyboard = keyboard;
-	}
-};
-
-class Plugin {
-public:
-	Plugin(const std::vector<std::string>& command);
-	Plugin();
-	std::vector<std::string> command;
-	virtual ApiSayObj exec(const std::vector<std::string>& args = {});
-};
-
-class FPlugin : public Plugin{
-public:
-	FPlugin(const std::vector<std::string>& command);
-	ApiSayObj exec(const std::vector<std::string>& args = {});
 };

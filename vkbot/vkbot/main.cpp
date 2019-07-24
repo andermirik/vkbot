@@ -31,6 +31,8 @@ json apisay(std::string text, std::string peer_id, std::string attachment="", st
 	std::string token;
 	std::ifstream fin("config/apikey.txt");
 	fin >> token;
+	fin.close();
+
 	std::string data = "access_token=" + token
 		+ "&v=5.80&peer_id=" + peer_id
 		+ "&message=" + text
@@ -43,6 +45,8 @@ json apisay(const ApiSayObj& api, std::string peer_id) {
 	std::string token;
 	std::ifstream fin("config/apikey.txt");
 	fin >> token;
+	fin.close();
+
 	std::string data = "access_token=" + token
 		+ "&v=5.80&peer_id=" + peer_id
 		+ "&message=" + api.text
@@ -55,6 +59,7 @@ json get_long_poll_server() {
 	std::string token;
 	std::ifstream fin("config/apikey.txt");
 	fin >> token;
+	fin.close();
 
 	auto resp = http::post("https://api.vk.com/method/groups.getLongPollServer", "access_token=" + token + "&v=5.101&group_id=184605473");
 	json lpg = json::parse(resp.Body())["response"];
@@ -78,15 +83,11 @@ std::string failed(json& response, json& lpg, int& ts) {
 }
 std::vector<std::string> bot_names = {"ня", "десу", "nya", "desu"};
 bool have_bot_name(std::string text) {
-	for (int i = 0; i < text.size();i++) {
-		text[i] = std::tolower(text[i]);
-	}
-	for (auto& word : split(text, ' ')) {
-		for(auto& name: bot_names)
-			if (word == name) {
-				return true;
-			}
-	}
+	text = to_lower(text);
+	auto words = split(text, ' ');
+	for (auto& name : bot_names) 
+		if (words.size() > 0 && words[0] == name)
+			return true;	
 	return false;
 }
 
@@ -108,6 +109,7 @@ std::string upload_pic_to_chat(std::string filename, long long chat_id) {
 	std::string token;
 	std::ifstream in("config/apikey.txt");
 	in >> token;
+	in.close();
 	auto resp = http::post("https://api.vk.com/method/photos.getMessagesUploadServer", "access_token=" + token + "&v=5.101");//&peer_id="+std::to_string(chat_id));
 	auto j = json::parse(resp.Body())["response"];
 	std::string upload_url = j["upload_url"].get<std::string>();
@@ -118,6 +120,7 @@ std::string upload_pic_to_chat(std::string filename, long long chat_id) {
 	fin.seekg(0, fin.beg);
 	char* buf = new char[length];
 	fin.read(buf, length);
+	fin.close();
 
 	http::Request req;
 	req.method = "POST";
@@ -151,6 +154,7 @@ void save_session(std::map<long long, std::set<long long>>&ids) {
 			fout << id<<std::endl;
 		}
 	}
+	fout.close();
 }
 
 std::map<long long, std::set<long long>> restore_session() {
@@ -185,6 +189,7 @@ int main() {
 
 	std::map<long long, std::set<long long>> ids = restore_session();	
 	std::map<long long, bool> chat_working;
+	PluginManager mgr;
 
 	while (true) {
 		auto resp = http::post(lpg["server"].get<std::string>(),
@@ -231,8 +236,12 @@ int main() {
 					else
 						for_me = have_bot_name(text);
 
-					if (for_me) {
-						/*if (split(text, ' ').size() > 1) {
+					int offset = 0;
+					if (for_me == true)
+						offset = 1;
+
+					
+					/*if (split(text, ' ').size() > 1) {
 							if (split(text, ' ')[1] == "режим" && split(text, ' ')[2] == "общения") {
 								if (chat_working[peer_id] == false)
 									apisay(u8"режим общения включен!", std::to_string(peer_id));
@@ -267,67 +276,31 @@ int main() {
 								apisay(call_text, std::to_string(peer_id));
 								continue;
 							}
-						}*/
+						}
+						*/
+					
+					auto words = split(text, ' ');
 
-						auto words = split(text, ' ');
-
-						Plugin plugin1 = std::vector<std::string>({"default", "plugin"});
-						FPlugin plugin2 = std::vector<std::string>({ "F" });
-
-						std::vector<Plugin*> plugins;
-						plugins.push_back(&plugin1);
-						plugins.push_back(&plugin2);
-
-						bool smth_worked = false;
-
-						for (auto& plugin : plugins) {
-							int length_command = a_eq_b(std::vector<std::string>(words.begin() + 1, words.end()), plugin->command);
+					bool smth_worked = false;
+					for (auto& plugin : mgr.plugins) {
+						if (plugin.get()->must_be_private == for_me || plugin.get()->must_be_private == false) {
+							int length_command = a_eq_b(std::vector<std::string>(words.begin() + offset, words.end()), plugin.get()->command);
 							if (length_command != 0) {
-								auto args = std::vector<std::string>(words.begin() + length_command + 1, words.end());
-								apisay(plugin->exec(args), std::to_string(peer_id));
+								auto args = std::vector<std::string>(words.begin() + length_command + offset, words.end());
+								apisay(plugin.get()->exec(args, peer_id, from_id), std::to_string(peer_id));
 								smth_worked = true;
 							}
 						}
-						if(smth_worked == false)
-							apisay(call_sinkin_api(urlencode(to_utf8(text))), std::to_string(peer_id));
 					}
-					else {
-						
-						if (text == "F"  && from_id > 0) {
-							static std::vector <std::string> F = {
-							"photo-184605473_457239023",
-							"photo-184605473_457239024",
-							"photo-184605473_457239025",
-							"photo-184605473_457239026",
-							"photo-184605473_457239027",
-							"photo-184605473_457239028",
-							"photo-184605473_457239029",
-							"photo-184605473_457239030",
-							"photo-184605473_457239031",
-							"photo-184605473_457239040"
-							};
-							apisay("F", std::to_string(peer_id), F[rand() % F.size()]);
-						}
-						if (text == "картинка") {
-							apisay(urlencode(u8"картинка"), std::to_string(peer_id), upload_pic_to_chat("img2.jpg", peer_id));
-						}	
-						if (text == "привет")
-							apisay(call_sinkin_api(urlencode(to_utf8("привет"))), std::to_string(peer_id));
-						if (text == "работает")
-							apisay(to_utf8("не работает!))"), std::to_string(peer_id));
-						if (text == "сколько") {
-							PROCESS_MEMORY_COUNTERS_EX pmc;
-							GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-							SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
-							std::stringstream memory;
-							memory << std::setprecision(2) << virtualMemUsedByMe / 1024.0 / 1024.0 << "MB";
-							apisay(memory.str(), std::to_string(peer_id));
-						}
-						if (text.find("парни") != std::string::npos)
-							apisay(urlencode(u8"парниииииии"), std::to_string(peer_id), "photo-184605473_457239042");
-						
+					if (smth_worked == false && (for_me == true || chat_working[peer_id] == true)) {
+						apisay(call_sinkin_api(urlencode(to_utf8(text))), std::to_string(peer_id));
 					}
 				}
+				/*
+				if (text.find("парни") != std::string::npos)
+					apisay(urlencode(u8"парниииииии"), std::to_string(peer_id), "photo-184605473_457239042");
+				}
+			}*/
 	}
 
 	return(0);

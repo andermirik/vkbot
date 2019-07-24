@@ -112,3 +112,10 @@ std::string to_ascii(std::string utf8s) {
 	}
 	return "";
 }
+
+std::string to_lower(std::string str) {
+	for (int i = 0; i < str.size(); i++) {
+		str[i] = tolower(str[i]);
+	}
+	return str;
+}
