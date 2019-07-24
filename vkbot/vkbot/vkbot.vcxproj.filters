@@ -42,6 +42,9 @@
     <ClCompile Include="Attachment.cpp">
       <Filter>Файлы заголовков</Filter>
     </ClCompile>
+    <ClCompile Include="plugins\plugins.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="http\http.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="Attachment.h">
       <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugins.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

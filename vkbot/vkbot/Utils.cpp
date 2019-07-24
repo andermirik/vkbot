@@ -1,5 +1,16 @@
 #include "Utils.h"
 
+std::string join(std::vector<std::string> v, std::string separator) {
+	std::stringstream ss;
+	for (size_t i = 0; i < v.size(); ++i)
+	{
+		if (i != 0)
+			ss << separator;
+		ss << v[i];
+	}
+	return ss.str();
+}
+
 std::string char2hex(const char dec) {
 	char dig1 = (dec & 0xF0) >> 4;
 	char dig2 = (dec & 0x0F);

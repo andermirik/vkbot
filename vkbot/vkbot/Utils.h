@@ -2,7 +2,9 @@
 #include <string>
 #include <vector>
 #include "windows.h"
+#include <sstream>
 
+std::string join(std::vector<std::string> v, std::string separator);
 std::string char2hex(const char dec);
 std::vector<std::string> split(const std::string& s, char seperator);
 std::string urlencode(const std::string &url);
