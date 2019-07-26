@@ -17,6 +17,6 @@ public:
 		plugins["chat_com"] = std::make_unique<ChatCommunicationPlugin>(ChatCommunicationPlugin({ {"режим", "общения"} }, CallArea::Me));
 		plugins["F"] =  std::make_unique<FPlugin>(FPlugin({ { "F" } }, CallArea::Any));
 		plugins["meme"] = std::make_unique<MemePlugin>(MemePlugin({ { "" } }, CallArea::Any));
-		plugins["what"] = std::make_unique<SearchPlugin>(SearchPlugin({ { "что" } }, CallArea::Me));
+		plugins["what"] = std::make_unique<SearchPlugin>(SearchPlugin({ { "что" }, {"what"} }, CallArea::Me));
 	}
 };
