@@ -76,11 +76,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\andermirik\Documents\GitHub\vkbot\vkbot\vkbot\json;C:\OpenSSL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Gumbo\include;C:\Users\andermirik\Documents\GitHub\vkbot\vkbot\vkbot\json;C:\OpenSSL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\OpenSSL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;libsslMT.lib;Crypt32.lib;libcryptoMT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Gumbo\lib;C:\OpenSSL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gumbo.lib;ws2_32.lib;libsslMT.lib;Crypt32.lib;libcryptoMT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,6 +125,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="html_parser\Document.cpp" />
+    <ClCompile Include="html_parser\Node.cpp" />
+    <ClCompile Include="html_parser\Object.cpp" />
+    <ClCompile Include="html_parser\Parser.cpp" />
+    <ClCompile Include="html_parser\QueryUtil.cpp" />
+    <ClCompile Include="html_parser\Selection.cpp" />
+    <ClCompile Include="html_parser\Selector.cpp" />
     <ClCompile Include="http\http.cpp" />
     <ClCompile Include="http\request.cpp" />
     <ClCompile Include="http\responce.cpp" />
@@ -135,11 +142,19 @@
     <ClCompile Include="plugins\plugin_f.cpp" />
     <ClCompile Include="plugins\plugin.cpp" />
     <ClCompile Include="plugins\plugin_meme.cpp" />
+    <ClCompile Include="plugins\plugin_search.cpp" />
     <ClCompile Include="plugins\plugin_stat.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="vk\vk.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="html_parser\Document.h" />
+    <ClInclude Include="html_parser\Node.h" />
+    <ClInclude Include="html_parser\Object.h" />
+    <ClInclude Include="html_parser\Parser.h" />
+    <ClInclude Include="html_parser\QueryUtil.h" />
+    <ClInclude Include="html_parser\Selection.h" />
+    <ClInclude Include="html_parser\Selector.h" />
     <ClInclude Include="http\http.h" />
     <ClInclude Include="http\request.h" />
     <ClInclude Include="http\responce.h" />
@@ -150,6 +165,7 @@
     <ClInclude Include="plugins\plugin_f.h" />
     <ClInclude Include="plugins\plugins.h" />
     <ClInclude Include="plugins\plugin.h" />
+    <ClInclude Include="plugins\plugin_search.h" />
     <ClInclude Include="plugins\plugin_stat.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="vk\vk.h" />

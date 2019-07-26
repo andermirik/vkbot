@@ -31,6 +31,12 @@
     <Filter Include="Файлы заголовков\vk">
       <UniqueIdentifier>{a5916a81-3fa2-4668-80b3-cc842e4d9977}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\html_parser">
+      <UniqueIdentifier>{8a427b0b-1194-46cd-b6e5-4eccfffbc6a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\html_parser">
+      <UniqueIdentifier>{7bf2e8f4-dabd-465f-8943-aabf2639beab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="http\http.cpp">
@@ -72,6 +78,30 @@
     <ClCompile Include="vk\vk.cpp">
       <Filter>Исходные файлы\vk</Filter>
     </ClCompile>
+    <ClCompile Include="html_parser\Selection.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="html_parser\Selector.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="html_parser\Document.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="html_parser\Node.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="html_parser\Object.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="html_parser\Parser.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="html_parser\QueryUtil.cpp">
+      <Filter>Исходные файлы\html_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\plugin_search.cpp">
+      <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="http\http.h">
@@ -112,6 +142,30 @@
     </ClInclude>
     <ClInclude Include="vk\vk.h">
       <Filter>Файлы заголовков\vk</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\Document.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\Node.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\Object.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\Parser.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\QueryUtil.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\Selection.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="html_parser\Selector.h">
+      <Filter>Файлы заголовков\html_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugin_search.h">
+      <Filter>Файлы заголовков\plugins</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

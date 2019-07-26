@@ -12,3 +12,4 @@ std::string urlencode(const std::string &url);
 std::string to_utf8(const std::string& ascii_str);
 std::string to_ascii(std::string utf8);
 std::string to_lower(std::string str);
+std::string replace_all(std::string str, const std::string& from, const std::string& to);

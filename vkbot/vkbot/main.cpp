@@ -10,6 +10,8 @@
 #include <iomanip>
 #include <thread>
 
+
+
 using namespace std::string_literals;
 using json = nlohmann::json;
 
@@ -68,6 +70,8 @@ int main() {
 	int ts = std::stoi(lpg["ts"].get<std::string>());
 
 	PluginManager mgr;
+	
+	
 
 	while (true) {
 		auto resp = http::post(lpg["server"].get<std::string>(),
