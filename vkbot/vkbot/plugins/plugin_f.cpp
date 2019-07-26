@@ -1,9 +1,9 @@
 #include "plugin_f.h"
 
-FPlugin::FPlugin(const std::vector<std::string>& command, bool must_be_private) : Plugin(command, must_be_private) {
+FPlugin::FPlugin(const std::vector<std::vector<std::string>>& command, CallArea call_area) : Plugin(command, call_area) {
 }
 
-ApiSayObj FPlugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
+void FPlugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
 	static std::vector <std::string> F = {
 		"photo-184605473_457239023",
 		"photo-184605473_457239024",
@@ -22,5 +22,10 @@ ApiSayObj FPlugin::exec(const std::vector<std::string>& args, long peer_id, long
 		text = "F";
 		pict = F[rand() % F.size()];
 	}
-	return ApiSayObj(text, pict);
+
+	vk::apisay(text, std::to_string(peer_id), pict);
+}
+
+void FPlugin::update(std::string text, long peer_id, long from_id)
+{
 }

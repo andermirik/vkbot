@@ -25,6 +25,12 @@
     <Filter Include="Файлы заголовков\plugins">
       <UniqueIdentifier>{83e60499-bd86-454a-afa8-388d73a2fb01}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\vk">
+      <UniqueIdentifier>{0cdd70d0-360a-4925-8f96-44d369c50cec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\vk">
+      <UniqueIdentifier>{a5916a81-3fa2-4668-80b3-cc842e4d9977}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="http\http.cpp">
@@ -45,9 +51,6 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Attachment.cpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
     <ClCompile Include="plugins\plugin_f.cpp">
       <Filter>Исходные файлы\plugins</Filter>
     </ClCompile>
@@ -56,6 +59,18 @@
     </ClCompile>
     <ClCompile Include="plugins\plugin_stat.cpp">
       <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\plugin_meme.cpp">
+      <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\plugin_call_all.cpp">
+      <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="plugins\plugin_chat_communication.cpp">
+      <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="vk\vk.cpp">
+      <Filter>Исходные файлы\vk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,9 +89,6 @@
     <ClInclude Include="Utils.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Attachment.h">
-      <Filter>Исходные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="plugins\plugin_f.h">
       <Filter>Файлы заголовков\plugins</Filter>
     </ClInclude>
@@ -88,6 +100,18 @@
     </ClInclude>
     <ClInclude Include="plugins\plugin.h">
       <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugin_meme.h">
+      <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugin_call_all.h">
+      <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugin_chat_communication.h">
+      <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="vk\vk.h">
+      <Filter>Файлы заголовков\vk</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

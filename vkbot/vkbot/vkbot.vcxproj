@@ -125,28 +125,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Attachment.cpp" />
     <ClCompile Include="http\http.cpp" />
     <ClCompile Include="http\request.cpp" />
     <ClCompile Include="http\responce.cpp" />
     <ClCompile Include="http\uri.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="plugins\plugin_call_all.cpp" />
+    <ClCompile Include="plugins\plugin_chat_communication.cpp" />
     <ClCompile Include="plugins\plugin_f.cpp" />
     <ClCompile Include="plugins\plugin.cpp" />
+    <ClCompile Include="plugins\plugin_meme.cpp" />
     <ClCompile Include="plugins\plugin_stat.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="vk\vk.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Attachment.h" />
     <ClInclude Include="http\http.h" />
     <ClInclude Include="http\request.h" />
     <ClInclude Include="http\responce.h" />
     <ClInclude Include="http\uri.h" />
+    <ClInclude Include="plugins\plugin_call_all.h" />
+    <ClInclude Include="plugins\plugin_chat_communication.h" />
+    <ClInclude Include="plugins\plugin_meme.h" />
     <ClInclude Include="plugins\plugin_f.h" />
     <ClInclude Include="plugins\plugins.h" />
     <ClInclude Include="plugins\plugin.h" />
     <ClInclude Include="plugins\plugin_stat.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="vk\vk.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

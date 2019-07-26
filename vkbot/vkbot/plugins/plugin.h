@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "../Utils.h"
+#include "../vk/vk.h"
 
 class ApiSayObj {
 public:
@@ -20,12 +21,15 @@ public:
 	}
 };
 
+enum CallArea {Any, Me};
 class Plugin {
 public:
-	std::vector<std::string> command; 
-	bool must_be_private;
-	Plugin(const std::vector<std::string>& command, bool must_be_private = false);
+	std::vector<std::vector<std::string>> command;
+	CallArea call_area;
+	bool must_be_private();
+	Plugin(const std::vector<std::vector<std::string>>& command, CallArea call_area = CallArea::Any);
 	Plugin();
-	virtual ApiSayObj exec(const std::vector<std::string>& args = {}, long peer_id=0, long from_id=0);
+	virtual void exec(const std::vector<std::string>& args = {}, long peer_id=0, long from_id=0);
+	virtual void update(std::string text, long peer_id = 0, long from_id = 0);
 };
 

@@ -17,7 +17,6 @@
 
 namespace http {
 
-
 	Response get(std::string const& path, std::string const& data) {
 		Request request;
 		request.method = "GET";
