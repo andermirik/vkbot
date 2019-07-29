@@ -1,5 +1,6 @@
 #include "http/http.h"
 #include <nlohmann/json.hpp>
+
 #include "plugins/plugins.h"
 #include "Utils.h"
 
@@ -9,7 +10,6 @@
 #include <iostream>
 #include <iomanip>
 #include <thread>
-
 
 
 using namespace std::string_literals;
@@ -30,7 +30,7 @@ std::string call_sinkin_api(std::string text) {
 	return "";
 }
 
-std::vector<std::string> bot_names = {"ня", "десу", "nya", "desu"};
+std::vector<std::string> bot_names = {"ня", "десу", "nya", "desu", "[club184605473|@nyadesubot]"};
 
 bool have_bot_name(std::string text) {
 	text = to_lower(text);
@@ -71,8 +71,6 @@ int main() {
 
 	PluginManager mgr;
 	
-	
-
 	while (true) {
 		auto resp = http::post(lpg["server"].get<std::string>(),
 			"act=a_check&key="
@@ -80,6 +78,9 @@ int main() {
 			+ "&ts=" + std::to_string(ts)
 			+"&wait=25"
 			);
+		if (resp.Body() == "")
+			continue;
+
 		json response = json::parse(resp.Body());
 		
 		std::string error = vk::failed(response, lpg, ts);
@@ -117,6 +118,8 @@ int main() {
 						offset = 1;
 
 					auto words = split(text, ' ');
+
+					
 
 					bool smth_worked = false;
 					for (auto& plugin : mgr.plugins) {

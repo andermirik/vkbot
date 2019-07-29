@@ -81,8 +81,56 @@ namespace vk {
 			+ "&access_token=" + token
 			+ "&v=5.101"
 		);
-		j = json::parse(resp.Body())["response"];
+		
+		j = json::parse(resp.Body());
+		if (j.count("error") == 0) {
+			j = j["response"];
+			return "photo" + std::to_string(j[0]["owner_id"].get<int>()) + "_" + std::to_string(j[0]["id"].get<int>());
+		}
+		else return "";
+	}
 
-		return "photo" + std::to_string(j[0]["owner_id"].get<int>()) + "_" + std::to_string(j[0]["id"].get<int>());
+	std::string upload_pic_by_url(const std::string& url) {
+		std::string token;
+		std::ifstream in("config/apikey.txt");
+		in >> token;
+		in.close();
+
+		auto resp = http::post("https://api.vk.com/method/photos.getMessagesUploadServer", "access_token=" + token + "&v=5.101");
+		auto j = json::parse(resp.Body())["response"];
+		std::string upload_url = j["upload_url"].get<std::string>();
+
+		auto ret = http::get(url);
+		std::string mime = "image/jpeg";
+		
+		if (url.substr(url.find_last_of('.')+1) == "png")
+			mime = "image/png";
+
+		http::Request req;
+		req.method = "POST";
+		req.uri = http::Uri(upload_url);
+		req.headers["content-type"] = "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW";
+
+		req.body = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" \
+			"Content-Disposition: form-data; name=\"photo\"; filename=\"img.jpg\"\r\n" \
+			"Content-Type: "+mime+"\r\n\r\n" + ret.Body() + "\r\n" \
+			"------WebKitFormBoundary7MA4YWxkTrZu0gW--";
+
+		resp = http::sendRequest(req);
+		j = json::parse(resp.Body());
+		resp = http::post("https://api.vk.com/method/photos.saveMessagesPhoto",
+			"photo=" + j["photo"].get<std::string>()
+			+ "&server=" + std::to_string(j["server"].get<int>())
+			+ "&hash=" + j["hash"].get<std::string>()
+			+ "&access_token=" + token
+			+ "&v=5.101"
+		);
+
+		j = json::parse(resp.Body());
+		if (j.count("error") == 0) {
+			j = j["response"];
+			return "photo" + std::to_string(j[0]["owner_id"].get<int>()) + "_" + std::to_string(j[0]["id"].get<int>());
+		}
+		else return "";
 	}
 }

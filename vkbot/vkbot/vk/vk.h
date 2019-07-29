@@ -10,4 +10,5 @@ namespace vk {
 	json get_long_poll_server();
 	std::string failed(json& response, json& lpg, int& ts);
 	std::string upload_pic_to_chat(std::string filename, long long chat_id);
+	std::string upload_pic_by_url(const std::string& url);
 }

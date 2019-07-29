@@ -102,6 +102,9 @@
     <ClCompile Include="plugins\plugin_search.cpp">
       <Filter>Исходные файлы\plugins</Filter>
     </ClCompile>
+    <ClCompile Include="plugins\plugin_34.cpp">
+      <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="http\http.h">
@@ -165,6 +168,9 @@
       <Filter>Файлы заголовков\html_parser</Filter>
     </ClInclude>
     <ClInclude Include="plugins\plugin_search.h">
+      <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugin_34.h">
       <Filter>Файлы заголовков\plugins</Filter>
     </ClInclude>
   </ItemGroup>

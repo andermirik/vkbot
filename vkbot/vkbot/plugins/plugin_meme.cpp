@@ -12,4 +12,7 @@ void MemePlugin::update(std::string text, long peer_id, long from_id)
 {
 	if (text.find("парни") != std::string::npos)
 		vk::apisay(urlencode(u8"парниииииии"), std::to_string(peer_id), "photo-184605473_457239042");
+	if (text.find("сурс") != std::string::npos)
+		vk::apisay(urlencode(u8""), std::to_string(peer_id), "photo-184605473_457240318");
+	
 }

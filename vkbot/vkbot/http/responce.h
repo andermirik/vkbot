@@ -16,7 +16,8 @@ namespace http {
 		void fromString(std::string str);
 		std::string readUntilChr(std::string& src, char until, int& pos);
 		std::string to_string();
-
+		std::istream& safeGetline(std::istream& is, std::string& t);
+		
 		int Status_code();
 		std::string Body();
 	};

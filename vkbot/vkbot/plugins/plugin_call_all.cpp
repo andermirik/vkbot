@@ -8,11 +8,12 @@ CallAllPlugin::CallAllPlugin(const std::vector<std::vector<std::string>>& comman
 }
 
 void CallAllPlugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
+	if (from_id != 159334597)
+		return;
 	std::string token;
 	std::ifstream fin("config/apikey.txt");
 	fin >> token;
 	fin.close();
-
 	if (args.size() > 0 && (args[0] == "admin" || args[0] == "админ")) {
 		auto resp = http::post("https://api.vk.com/method/messages.getConversationMembers",
 			"access_token=" + token + "&v=5.101&&peer_id=" + std::to_string(peer_id)
@@ -40,7 +41,9 @@ void CallAllPlugin::update(std::string text, long peer_id, long from_id)
 		save_session();
 		std::cout << "saving..." << std::endl;
 	}
-
+	//if (from_id == 334626257) {
+	//	vk::apisay(urlencode(u8"@khanna88 дурак"), std::to_string(2000000001));
+	//}
 	if (peer_id != from_id && from_id > 0)
 		ids[peer_id].insert(from_id);
 }
