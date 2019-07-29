@@ -6,13 +6,14 @@
 
 using json = nlohmann::json;
 Rule34Plugin::Rule34Plugin(const std::vector<std::vector<std::string>>& command, CallArea call_area) : Plugin(command, call_area) {
-
+	 last_call = 0;
 }
 
 void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
+	
+	bool admin = true;
 	if (from_id != 159334597 && from_id != 203053340) {
-		vk::apisay(urlencode(u8"ток для админов"), std::to_string(peer_id));
-		return;
+		admin = false;
 	}
 
 	int offset = 0;
@@ -22,8 +23,16 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 		offset = 1;
 	}
 
-	vk::apisay(urlencode(u8"начинаю качать фотки..."), std::to_string(peer_id));
-	static std::string black_list = "-anthro+-fur+-scat*+-darling_in_the_franxx+-furry+-dragon+-guro+-animal_penis+-animal+-wolf+-fox+-webm+-gif+-my_little_pony+-monster*+-3d+-animal*+-ant+-insects+-mammal+-horse+-blotch+-deer+-real*+-shit+-everlasting_summer+-copro*+-wtf+";
+	if (!admin && count_pic > 10) {
+		count_pic = 10;
+
+		if (time(0) - last_call <= 15) {
+			vk::apisay(urlencode(u8"перезарядка r34: " + std::to_string(15 - (time(0) - last_call)) + u8" секунд"), std::to_string(peer_id));
+			return;
+		}
+	}
+
+	static std::string black_list = "-anthro+-fur+-scat*+-furry+-dragon+-guro+-animal_penis+-animal+-wolf+-fox+-webm+-gif+-my_little_pony+-monster*+-3d+-animal*+-ant+-insects+-mammal+-horse+-blotch+-deer+-real*+-shit+-copro*+-wtf+";
 	auto ret = http::get("https://rule34.xxx/index.php?page=dapi&q=index&s=post&tags="
 		+ black_list + join(std::vector<std::string>(args.begin()+offset, args.end()), "+") + "&limit=10000"
 	);
@@ -33,6 +42,16 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 	std::vector<std::string> images;
 	std::vector<std::thread> thread_pool;
 	int k = 0;
+
+	if (posts.size() == 0) {
+		vk::apisay(urlencode(u8"ничего не нашел!"), std::to_string(peer_id));
+		last_call = 0;
+		return;
+	}
+	else if (posts.size() < count_pic)
+		count_pic = posts.size();
+
+	vk::apisay(urlencode(u8"начинаю качать фотки..."), std::to_string(peer_id));
 
 	for (int i = 1; i <= count_pic; i++) {
 		auto post = posts[rand() % (posts.size() - 1)];
@@ -55,6 +74,9 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 			}
 		}
 	}
+
+	
+	last_call = time(0);
 }
 
 void Rule34Plugin::update(std::string text, long peer_id, long from_id)

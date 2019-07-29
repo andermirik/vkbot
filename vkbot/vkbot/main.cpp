@@ -120,7 +120,8 @@ int main() {
 						}
 						plugin.second.get()->update(text, peer_id, from_id);
 					}
-					if (smth_worked == false && (for_me == true || ((ChatCommunicationPlugin*)mgr.plugins["chat_com"].get())->chat_communication[peer_id] == true)) {
+					bool plugin_chat_com_enabled = ((ChatCommunicationPlugin*)mgr.plugins["chat_com"].get())->chat_communication[peer_id];
+					if (smth_worked == false && (for_me == true ||  plugin_chat_com_enabled)) {
 						vk::apisay(call_sinkin_api(urlencode(to_utf8(text))), std::to_string(peer_id));
 					}
 				}
