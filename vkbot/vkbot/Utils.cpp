@@ -131,6 +131,20 @@ std::string replace_all(std::string str, const std::string& from, const std::str
 	return str;
 }
 
+int a_in_b_overlay(const std::vector<std::string>& src, const std::vector<std::string>& sub) {
+	int i = 0;
+	if (src.size() >= sub.size()) {
+		for (i = 0; i < sub.size(); i++) {
+			if (src[i] != sub[i])
+				if (i < sub.size())
+					return 0;
+				else
+					return i;
+		}
+	}
+	return i;
+}
+
 std::istream& safeGetline(std::istream& is, std::string& t)
 {
 	t.clear();

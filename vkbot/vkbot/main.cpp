@@ -6,11 +6,8 @@
 
 #include "windows.h"
 
-#include <fstream>
-#include <iostream>
 #include <iomanip>
 #include <thread>
-
 
 using namespace std::string_literals;
 using json = nlohmann::json;
@@ -39,20 +36,6 @@ bool have_bot_name(std::string text) {
 		if (words.size() > 0 && words[0] == name)
 			return true;	
 	return false;
-}
-
-int a_in_b_overlay(const std::vector<std::string>& src, const std::vector<std::string>& sub) {
-	int i = 0;
-	if (src.size() >= sub.size()) {
-		for (i = 0; i < sub.size(); i++) {
-			if (src[i] != sub[i])
-				if (i < sub.size())
-					return 0;
-				else
-					return i;
-		}
-	}
-	return i;
 }
 
 int main() {
@@ -118,8 +101,6 @@ int main() {
 						offset = 1;
 
 					auto words = split(text, ' ');
-
-					
 
 					bool smth_worked = false;
 					for (auto& plugin : mgr.plugins) {
