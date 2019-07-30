@@ -48,17 +48,24 @@ void process_update(json& update, PluginManager& mgr, int worker_id) {
 		long long peer_id = update["object"]["peer_id"].get<long long>();
 		long long from_id = update["object"]["from_id"].get<long long>();
 
-		if (peer_id < 2000000000)
-			for_me = true;
-		else
-			for_me = have_bot_name(text);
-
 		int offset = 0;
-		if (for_me == true) {
-			offset = 1;
+
+		if (peer_id < 2000000000) {
+			for_me = true;
+			if (have_bot_name(text))
+				offset = 1;
+		}
+		else {
+			for_me = have_bot_name(text);
+			if (for_me)
+				offset = 1;
+		}
+
+		if (for_me) {
 			std::cout << "worker[" + std::to_string(worker_id + 1) + "]: " << from_id << " -> ";
 			std::cout << text << std::endl;
 		}
+		
 		auto words = split(text, ' ');
 
 		bool smth_worked = false;
@@ -139,10 +146,10 @@ int main() {
 
 		std::string error = vk::failed(response, lpg, ts);
 		if (error != "") {
-			std::cout << "========================" << std::endl;
-			std::cout << "Failed with " << error << std::endl
-					  << "Trying to continue..." << std::endl;
-			std::cout << "========================" << std::endl;
+			std::cout << "========================" << std::endl
+					  << "Failed with " << error    << std::endl
+					  << "Trying to continue..."    << std::endl
+					  << "========================" << std::endl;
 			continue;
 		}
 
