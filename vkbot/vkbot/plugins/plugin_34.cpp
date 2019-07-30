@@ -10,7 +10,7 @@ Rule34Plugin::Rule34Plugin(const std::vector<std::vector<std::string>>& command,
 }
 
 void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
-	bool admin = false;
+	bool admin = true;
 	if (from_id != 159334597 && from_id != 203053340) {
 		admin = false;
 	}
@@ -27,7 +27,6 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 
 	if (!admin && count_pic > 10) {
 		count_pic = 10;
-
 	}
 
 	if (!admin && time(0) - last_call[peer_id] <= 15) {
@@ -61,7 +60,7 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 
 		thread_pool.push_back(std::thread([&images, post, &k]() {
 			images.push_back(vk::upload_pic_by_url(post["@file_url"].get<std::string>()));
-			std::cout << ++k << " done.\n";
+			//std::cout << ++k << " done.\n";
 		}));
 
 		if (i % 10 == 0 || i == count_pic) {
