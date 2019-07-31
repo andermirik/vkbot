@@ -1,7 +1,6 @@
 #pragma once
 #include "plugin.h"
 
-
 class Rule34Plugin : public Plugin {
 public:
 	std::map<long long, int> last_call;

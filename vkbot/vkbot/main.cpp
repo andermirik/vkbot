@@ -97,7 +97,7 @@ int main() {
 	system("chcp 1251");
 	system("cls");
 	setlocale(LC_ALL, "rus");
-	srand(time(0));
+	
 
 	std::string token;
 	std::ifstream fin("config/apikey.txt");
@@ -123,7 +123,7 @@ int main() {
 					updates.pop();
 				}
 				mutex.unlock();
-				if(update!=nullptr)
+				if(update != nullptr)
 					process_update(update, mgr, i);
 
 				std::this_thread::sleep_for(std::chrono::microseconds(10));

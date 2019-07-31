@@ -3,13 +3,16 @@
 #include "../http/http.h"
 #include "nlohmann/json.hpp"
 #include <thread>
+#include <mutex>
 
 using json = nlohmann::json;
 Rule34Plugin::Rule34Plugin(const std::vector<std::vector<std::string>>& command, CallArea call_area) : Plugin(command, call_area) {
-	
+	srand(time(0));
 }
 
 void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
+	static std::mutex mutex;
+	mutex.lock();
 	bool admin = true;
 	if (from_id != 159334597 && from_id != 203053340) {
 		admin = false;
@@ -34,7 +37,7 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 		return;
 	}
 
-	static std::string black_list = "-anthro+-fur+-scat*+-furry+-dragon+-guro+-animal_penis+-animal+-wolf+-fox+-webm+-gif+-my_little_pony+-monster*+-3d+-animal*+-ant+-insects+-mammal+-horse+-blotch+-deer+-real*+-shit+-copro*+-wtf+";
+	static std::string black_list = "-anthro+-fur+-scat*+-furry+-dragon+-guro+-animal_penis+-animal+-wolf+-fox+-webm+-my_little_pony+-monster*+-3d+-animal*+-ant+-insects+-mammal+-horse+-blotch+-deer+-real*+-shit+-copro*+-wtf+";
 	auto ret = http::get("https://rule34.xxx/index.php?page=dapi&q=index&s=post&tags="
 		+ black_list + join(std::vector<std::string>(args.begin()+offset, args.end()), "+") + "&limit=10000"
 	);
@@ -57,10 +60,15 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 
 	for (int i = 1; i <= count_pic; i++) {
 		auto post = posts[rand() % (posts.size() - 1)];
+		
+		std::string url = post["@file_url"].get<std::string>();
 
-		thread_pool.push_back(std::thread([&images, post, &k]() {
-			images.push_back(vk::upload_pic_by_url(post["@file_url"].get<std::string>()));
-			//std::cout << ++k << " done.\n";
+		thread_pool.push_back(std::thread([&images, url, &k, from_id]() {
+			if(url.substr(url.find_last_of('.')+1)!="gif")
+				images.push_back(vk::upload_pic_by_url(url, from_id));
+			else 
+				images.push_back(vk::upload_document_by_url(url, from_id));
+			std::cout << ++k << " done. " << url << std::endl;
 		}));
 
 		if (i % 10 == 0 || i == count_pic) {
@@ -78,6 +86,7 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 	}
 
 	last_call[peer_id] = time(0);
+	mutex.unlock();
 }
 
 void Rule34Plugin::update(std::string text, long peer_id, long from_id)
