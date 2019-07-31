@@ -12,9 +12,8 @@ namespace http {
 		std::map<std::string, std::vector<std::string>> headers;
 
 		Response();
-		Response(std::string str);
-		void fromString(std::string str);
-		std::string readUntilChr(std::string& src, char until, int& pos);
+		Response(std::string& str);
+		void fromString(std::string& str);
 		std::string to_string();
 		std::istream& safeGetline(std::istream& is, std::string& t);
 		

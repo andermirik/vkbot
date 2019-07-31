@@ -11,7 +11,7 @@ void StatPlugin::exec(const std::vector<std::string>& args, long peer_id, long f
 	SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
 	std::stringstream stat;
 	stat << "[ Статистика ]" << std::endl;
-	stat << "используется ОЗУ: " << std::setprecision(2) << virtualMemUsedByMe / 1024.0 / 1024.0 << "MB";
+	stat << "используется ОЗУ: " << std::setprecision(2) << std::setiosflags(std::ios::fixed | std::ios::showpoint) << virtualMemUsedByMe / 1024.0 / 1024.0 << "MB";
 
 	vk::apisay(urlencode(to_utf8(stat.str())), std::to_string(peer_id));
 }

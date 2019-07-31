@@ -11,4 +11,5 @@ namespace vk {
 	std::string failed(json& response, json& lpg, int& ts);
 	std::string upload_document_by_url(const std::string& url, long peer_id);
 	std::string upload_pic_by_url(const std::string& url, long from_id);
+	std::string  getToken();
 }

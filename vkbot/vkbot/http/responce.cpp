@@ -5,26 +5,22 @@ http::Response::Response() {
 	body = "";
 }
 
-http::Response::Response(std::string str) {
+http::Response::Response(std::string& str) {
 	fromString(str);
 }
 
-void http::Response::fromString(std::string str) {
-	int pos = 0;
+void http::Response::fromString(std::string& src) {
+	std::string line;
+	std::stringstream str(src);
 
-	std::string http_version = readUntilChr(str, ' ', pos);
-	this->status_code = std::stoi(readUntilChr(str, ' ', pos));
-	std::string res = readUntilChr(str, '\n', pos);
+	str >> line;
+	str >> status_code;
+	safeGetline(str, line);
 
-	std::string row = readUntilChr(str, '\n', pos);
-
-	while (row != "\r") {
-		int row_pos = 0;
-		std::string header = readUntilChr(row, ':', row_pos);
-		std::string value = readUntilChr(row, '\r', ++row_pos);
-
+	for (line; safeGetline(str, line) && line!="";) {
+		std::string header = line.substr(0, line.find(':'));
+		std::string value = line.substr(line.find(' ')+1);
 		headers[header].push_back(value);
-		row = readUntilChr(str, '\n', pos);
 	}
 
 	bool chunked = false;
@@ -32,36 +28,24 @@ void http::Response::fromString(std::string str) {
 		if(headers["Transfer-Encoding"][0]=="chunked")
 			chunked = true;
 
-	std::stringstream ss;
-	std::stringstream src(str.substr(pos));
+	int body_offset = src.find("\r\n\r\n") + 4;
+
 	if (chunked) {
-		int i = 0;
-		for (std::string line; safeGetline(src, line);){
-			i++;
+		
+		str.seekg(body_offset);
+		for (std::string line; safeGetline(str, line);) {
 			if (line != "0") {
 				if (!line.empty() && (line.find_first_not_of("0123456789abcdefABCDEF") != line.npos)) {
-					ss << line;
+					body.append(line);
 				}
 			}
 		}
 	}
 	else {
-		for (pos; pos < str.size(); pos++) {
-			ss << str[pos];
-		}
+		body = src.substr(body_offset);
 	}
-
-	body = ss.str();
 }
 
-std::string http::Response::readUntilChr(std::string& src, char until, int& pos) {
-	std::stringstream ss;
-	while (src[pos] != until && pos < src.size()) {
-		ss << src[pos++];
-	}
-	pos++;
-	return ss.str();
-}
 
 std::istream& http::Response::safeGetline(std::istream& is, std::string& t)
 {

@@ -98,6 +98,7 @@ int main() {
 	system("cls");
 	setlocale(LC_ALL, "rus");
 	
+//	vk::upload_document_by_url("https://img.rule34.xxx/images/2134/b5dca30e9dedac907f4d9b8ebb10aaf5.gif", 2000000001);
 
 	std::string token;
 	std::ifstream fin("config/apikey.txt");

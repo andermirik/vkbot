@@ -7,12 +7,14 @@
 
 using json = nlohmann::json;
 Rule34Plugin::Rule34Plugin(const std::vector<std::vector<std::string>>& command, CallArea call_area) : Plugin(command, call_area) {
-	srand(time(0));
+	
 }
 
 void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long from_id) {
+	srand(time(0));
 	static std::mutex mutex;
-	mutex.lock();
+	std::lock_guard<std::mutex> lock(mutex);
+
 	bool admin = true;
 	if (from_id != 159334597 && from_id != 203053340) {
 		admin = false;
@@ -64,10 +66,19 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 		std::string url = post["@file_url"].get<std::string>();
 
 		thread_pool.push_back(std::thread([&images, url, &k, from_id]() {
-			if(url.substr(url.find_last_of('.')+1)!="gif")
-				images.push_back(vk::upload_pic_by_url(url, from_id));
-			else 
-				images.push_back(vk::upload_document_by_url(url, from_id));
+			static std::mutex mutex_images;
+			if (url.substr(url.find_last_of('.') + 1) != "webm") {
+				std::string image;
+				if (url.substr(url.find_last_of('.') + 1) != "gif") 
+					image = vk::upload_pic_by_url(url, from_id);
+				else
+					image = vk::upload_document_by_url(url, from_id);
+				if (image != "") {
+					mutex_images.lock();
+					images.push_back(image);
+					mutex_images.unlock();
+				}
+			}
 			std::cout << ++k << " done. " << url << std::endl;
 		}));
 
@@ -76,7 +87,7 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 				thread.join();
 
 			thread_pool.clear();
-			vk::apisay("", std::to_string(peer_id), join(images, ","));
+			std::cout << vk::apisay("", std::to_string(peer_id), join(images, ",")) << std::endl;
 			images.clear();
 
 			if (i == count_pic) {
@@ -86,7 +97,6 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 	}
 
 	last_call[peer_id] = time(0);
-	mutex.unlock();
 }
 
 void Rule34Plugin::update(std::string text, long peer_id, long from_id)
