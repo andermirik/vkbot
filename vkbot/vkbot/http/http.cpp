@@ -63,7 +63,7 @@ namespace http {
 
 	std::string get_mime(std::string const & filename)
 	{
-		std::string type = filename.substr(filename.find_last_of('.') + 1);
+		std::string type = filename.substr(filename.find_last_of('.'));
 		if(types::mime.find(type)!=types::mime.end())
 			return types::mime[type];
 		return "image/jpeg";
