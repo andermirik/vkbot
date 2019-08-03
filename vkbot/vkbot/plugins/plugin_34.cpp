@@ -1,7 +1,6 @@
-#include <xml2json.hpp>
 #include "plugin_34.h"
+#include "xml2json.hpp"
 #include "../http/http.h"
-#include "nlohmann/json.hpp"
 #include <thread>
 #include <mutex>
 
@@ -33,9 +32,9 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 	if (!admin && count_pic > 10) {
 		count_pic = 10;
 	}
-
+	std::cout << time(0) - last_call[peer_id] << std::endl;
 	if (!admin && time(0) - last_call[peer_id] <= 15) {
-		vk::apisay(urlencode(u8"перезарядка r34: " + std::to_string(15 - (time(0) - last_call[peer_id])) + u8" секунд"), std::to_string(peer_id));
+		vk::apisay(urlencode(u8"перезарядка r34: " + std::to_string(15 - (time(0) - last_call[peer_id])) + u8" секунд"), std::to_string(peer_id));	
 		return;
 	}
 
@@ -43,7 +42,8 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 	auto ret = http::get("https://rule34.xxx/index.php?page=dapi&q=index&s=post&tags="
 		+ black_list + join(std::vector<std::string>(args.begin()+offset, args.end()), "+") + "&limit=10000"
 	);
-	auto xml = xml2json(ret.Body().c_str());
+
+	auto xml = xml2json(ret.body.c_str());
 	auto posts = json::parse(xml)["posts"]["post"];
 
 	std::vector<std::string> images;
@@ -67,12 +67,15 @@ void Rule34Plugin::exec(const std::vector<std::string>& args, long peer_id, long
 
 		thread_pool.push_back(std::thread([&images, url, &k, from_id]() {
 			static std::mutex mutex_images;
-			if (url.substr(url.find_last_of('.') + 1) != "webm") {
-				std::string image;
-				if (url.substr(url.find_last_of('.') + 1) != "gif") 
+			std::string format = url.substr(url.find_last_of('.') + 1);
+			std::string image;
+
+			if (format != "webm") {
+				if (format != "gif") 
 					image = vk::upload_pic_by_url(url, from_id);
 				else
 					image = vk::upload_document_by_url(url, from_id);
+
 				if (image != "") {
 					mutex_images.lock();
 					images.push_back(image);

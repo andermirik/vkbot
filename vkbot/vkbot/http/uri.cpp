@@ -1,58 +1,34 @@
 #include <string>
 #include <sstream>
 #include "uri.h"
+#include <regex>
 
 http::Uri::Uri(std::string str)
 {
 	this->str = str;
+	from_string(str);
 }
 
 http::Uri::Uri()
 {
+
 }
 
-std::string http::Uri::scheme() {
-	std::stringstream ss;
-	for (auto chr : str) {
-		if (chr == ':')
-			break;
-		ss << chr;
-	}
-	return ss.str();
-}
+void http::Uri::from_string(std::string str)
+{
+	std::match_results<const char*> res;
+	std::regex uri("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
+	std::regex_search(str.c_str(), res, uri);
 
-std::string http::Uri::host() {
-	std::stringstream ss;
-	int i = str.find("//") + 2;
-	while (i < str.size()) {
-		if (str[i] == '/')
-			break;
-		ss << str[i++];
-	}
-	return ss.str();
-}
-std::string http::Uri::path() {
-	std::stringstream ss;
-	int i = scheme().size() + 4 + host().size();
-	if (!i)
-		return "";
-	while (i < str.size()) {
-		if (str[i] == '?')
-			break;
-		ss << str[i++];
-	}
-	return ss.str();
-}
+	scheme = res[2];
+	host = res[4];
+	path = res[5];
+	query = res[7];
+	fragment = res[9];
 
-std::string http::Uri::args() {
-	std::stringstream ss;
-	int i = str.find('?') + 1;
-	if (!i)
-		return "";
-	while (i < str.size()) {
-		if (str[i] == '#')
-			break;
-		ss << str[i++];
-	}
-	return ss.str();
+	std::regex file("\\.[a-z]*$");
+	std::regex_search(path.c_str(), res, file);
+	file_format = res[0];
+	if (!file_format.empty())
+		file_format = file_format.substr(1);
 }

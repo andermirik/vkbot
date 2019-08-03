@@ -10,14 +10,14 @@ namespace vk {
 			+ "&message=" + text
 			+ "&attachment=" + attachment
 			+ "&keyboard=" + keyboard;
-		return json::parse(http::post("https://api.vk.com/method/messages.send", data).Body());
+		return json::parse(http::post("https://api.vk.com/method/messages.send", data).body);
 	}
 
 	json get_long_poll_server() {
 		std::string token = getToken();
 
 		auto resp = http::post("https://api.vk.com/method/groups.getLongPollServer", "access_token=" + token + "&v=5.101&group_id=184605473");
-		json lpg = json::parse(resp.Body())["response"];
+		json lpg = json::parse(resp.body)["response"];
 		return lpg;
 	}
 
@@ -46,31 +46,12 @@ namespace vk {
 		auto resp = http::post("https://api.vk.com/method/docs.getMessagesUploadServer",
 			"peer_id="+std::to_string(peer_id)+"&type=doc&access_token=" + token + "&v=5.101"
 		);
-		auto j = json::parse(resp.Body())["response"];
+		auto j = json::parse(resp.body)["response"];
 		std::string upload_url = j["upload_url"].get<std::string>();
-
-		auto ret = http::get(url);
 		
-		std::string type = url.substr(url.find_last_of('.') + 1);
-		std::string mime = "image/jpeg";
+		resp = http::upload_files(upload_url, { http::File::from_uri("file", "file.gif", url) });
 
-		if (type == "png")
-			mime = "image/png";
-		else if (type == "gif")
-			mime = "image/gif";
-
-		http::Request req;
-		req.method = "POST";
-		req.uri = http::Uri(upload_url);
-		req.headers["content-type"] = "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW";
-
-		req.body = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" \
-			"Content-Disposition: form-data; name=\"file\"; filename=\"file.gif\"\r\n" \
-			"Content-Type: " + mime + "\r\n\r\n" + ret.Body() + "\r\n" \
-			"------WebKitFormBoundary7MA4YWxkTrZu0gW--";
-
-		resp = http::sendRequest(req);
-		j = json::parse(resp.Body());
+		j = json::parse(resp.body);
 		if (j.count("error") == 0) {
 			resp = http::post("https://api.vk.com/method/docs.save",
 				"file=" + j["file"].get<std::string>()
@@ -78,7 +59,7 @@ namespace vk {
 				+ "&v=5.101"
 			);
 
-			j = json::parse(resp.Body());
+			j = json::parse(resp.body);
 			if (j.count("error") == 0) {
 				j = j["response"];
 				return "doc" + std::to_string(j["doc"]["owner_id"].get<int>()) + "_" + std::to_string(j["doc"]["id"].get<int>());
@@ -91,32 +72,14 @@ namespace vk {
 	std::string upload_pic_by_url(const std::string& url, long peer_id) {
 		std::string token = getToken();
 		auto resp = http::post("https://api.vk.com/method/photos.getMessagesUploadServer", "peer_id=" + std::to_string(peer_id) + "&access_token=" + token + "&v=5.101");
-		auto j = json::parse(resp.Body());
+		auto j = json::parse(resp.body);
 		if (j.count("error") != 0) return "";
 		j = j["response"];
 		std::string upload_url = j["upload_url"].get<std::string>();
 
-		auto ret = http::get(url);
-		std::string mime = "image/jpeg";
-		
-		std::string type = url.substr(url.find_last_of('.') + 1);
-		if (type == "png")
-			mime = "image/png";
-		else if (type == "gif")
-			mime = "image/gif";
+		resp = http::upload_files(upload_url, { http::File::from_uri("photo", "img.jpg", url) });
 
-		http::Request req;
-		req.method = "POST";
-		req.uri = http::Uri(upload_url);
-		req.headers["content-type"] = "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW";
-
-		req.body = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" \
-			"Content-Disposition: form-data; name=\"photo\"; filename=\"img.jpg\"\r\n" \
-			"Content-Type: "+mime+"\r\n\r\n" + ret.Body() + "\r\n" \
-			"------WebKitFormBoundary7MA4YWxkTrZu0gW--";
-
-		resp = http::sendRequest(req);
-		j = json::parse(resp.Body());
+		j = json::parse(resp.body);
 		resp = http::post("https://api.vk.com/method/photos.saveMessagesPhoto",
 			"photo=" + j["photo"].get<std::string>()
 			+ "&server=" + std::to_string(j["server"].get<int>())
@@ -125,7 +88,7 @@ namespace vk {
 			+ "&v=5.101"
 		);
 
-		j = json::parse(resp.Body());
+		j = json::parse(resp.body);
 		if (j.count("error") == 0) {
 			j = j["response"];
 			return "photo" + std::to_string(j[0]["owner_id"].get<int>()) + "_" + std::to_string(j[0]["id"].get<int>());

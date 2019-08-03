@@ -1,10 +1,13 @@
 #pragma once
+#include "nlohmann/json.hpp"
 #include <string>
 #include <vector>
 #include "windows.h"
 #include <sstream>
 #include <iostream> 
 #include <fstream>
+
+
 
 std::string join(std::vector<std::string> v, std::string separator);
 std::string char2hex(const char dec);

@@ -45,15 +45,15 @@ void SearchPlugin::exec(const std::vector<std::string>& args, long peer_id, long
 		re.uri = http::Uri("https://yandex.ru/images/search?url=" + url + "&rpt=imageview");
 
 		auto result = http::sendRequest(re);
-		while (result.Status_code() == 302) {
-			re.uri = http::Uri(result.headers["Location"][0]);
+		while (result.status_code == 302) {
+			re.uri = http::Uri(result.headers["Location"]);
 			result = http::sendRequest(re);
 		}
 
 		std::stringstream ret;
-		if (result.Status_code() == 200) {
+		if (result.status_code == 200) {
 			CDocument doc;
-			doc.parse(result.Body());
+			doc.parse(result.body);
 			CSelection c = doc.find(".tags__wrapper a");
 			ret << "Думаю, на изображении что-то из этого: \r\n";
 			for (int i = 0; i < c.nodeNum(); i++)

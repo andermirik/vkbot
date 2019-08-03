@@ -18,7 +18,7 @@ void CallAllPlugin::exec(const std::vector<std::string>& args, long peer_id, lon
 		auto resp = http::post("https://api.vk.com/method/messages.getConversationMembers",
 			"access_token=" + token + "&v=5.101&&peer_id=" + std::to_string(peer_id)
 		);
-		auto j = json::parse(resp.Body())["response"];
+		auto j = json::parse(resp.body)["response"];
 		for (auto&item : j["items"]) {
 			if (item["member_id"].get<long long>() > 0)
 				ids[peer_id].insert(item["member_id"].get<long long>());

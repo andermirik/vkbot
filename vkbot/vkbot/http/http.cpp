@@ -9,35 +9,71 @@
 #pragma warning(disable:4996)
 
 #include "http.h"
+#include "mime.h"
 
 #include <iostream>
 #include <sstream>
-
-
+#include <fstream>
+#include <regex>
 
 namespace http {
 
-	Response get(std::string const& path, std::string const& data) {
+	Response get(std::string const& path, std::string const& data, Table const& headers) {
 		Request request;
 		request.method = "GET";
 		request.uri = Uri(path);
 		request.body = data;
+		request.headers = headers;
 		return sendRequest(request);
 	}
 
-	Response post(std::string const& path, std::string const& data) {
+	Response post(std::string const& path, std::string const& data, Table const& headers) {
 		Request request;
 		request.method = "POST";
 		request.uri = Uri(path);
 		request.body = data;
+		request.headers = headers;
 		return sendRequest(request);
+	}
+
+	Response upload_files(std::string const & path, std::vector<File> const& files, Table const& headers)
+	{
+		static std::string boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
+
+		Request request;
+		request.method = "POST";
+		request.uri = Uri(path);
+		request.headers = headers;
+
+		request.headers["content-type"] = "multipart/form-data; boundary=" + boundary;
+
+		for (auto& file : files) {
+			request.body.append("--"+boundary+"\r\n");
+			request.body.append("Content-Disposition: form-data; name=\"" + file.propertyname + "\";");
+			request.body.append(file.filename == "" ? "\r\n" : " filename=\"" + file.filename + "\";\r\n");
+			request.body.append(file.filename == "" ? "\r\n\r\n" : "Content-Type: " + get_mime(file.filename) + "\r\n\r\n");
+			request.body.append(file.filecontent);
+			request.body.append("\r\n");
+		}
+		if (!files.empty()) {
+			request.body.append("--" + boundary + "--");
+		}
+		return sendRequest(request);
+	}
+
+	std::string get_mime(std::string const & filename)
+	{
+		std::string type = filename.substr(filename.find_last_of('.') + 1);
+		if(types::mime.find(type)!=types::mime.end())
+			return types::mime[type];
+		return "image/jpeg";
 	}
 
 	Response sendRequest(Request&request) {
 		Response resp;
-		if (request.uri.scheme() == "http") 
+		if (request.uri.scheme == "http") 
 			resp = sendHTTP(request);
-		else if (request.uri.scheme() == "https") 
+		else if (request.uri.scheme == "https") 
 			resp = sendHTTPS(request);
 		return resp;
 	}
@@ -48,9 +84,9 @@ namespace http {
 		if (WSAStartup(DllVersion, &wsaData)) {
 			return Response();
 		}
-		std::string req = str(request);
+		std::string req = request.to_string();
 		addrinfo* pAddrInfo;
-		getaddrinfo(request.uri.host().c_str(), "443", 0, &pAddrInfo);
+		getaddrinfo(request.uri.host.c_str(), "443", 0, &pAddrInfo);
 
 		SOCKET connection = socket(
 			pAddrInfo->ai_family,
@@ -110,10 +146,10 @@ namespace http {
 			return Response();
 		}
 
-		std::string req = str(request);
+		std::string req = request.to_string();
 
 		addrinfo* pAddrInfo;
-		getaddrinfo(request.uri.host().c_str(), "80", 0, &pAddrInfo);
+		getaddrinfo(request.uri.host.c_str(), "80", 0, &pAddrInfo);
 
 		SOCKET connection = socket(
 			pAddrInfo->ai_family,
@@ -144,31 +180,42 @@ namespace http {
 		closesocket(connection);
 		return Response(result);
 	}
+	
+	File File::from_filename(std::string const & propertyname, std::string const & filename)
+	{
+		std::ifstream fin;
+		fin.exceptions(std::ios::failbit | std::ios::badbit);
+		fin.open(filename, std::ios::binary);
 
-	std::string str(Request& request) {
 		std::stringstream ss;
-		ss << request.method << " /" << request.uri.path() + "?" + request.uri.args() << " HTTP/1.1\r\n";
-		ss << "Host: " << request.uri.host() << "\r\n";
-		ss << "Content-Length: " << request.body.size() << "\r\n";
-		ss << "Connection: close\r\n";
-		ss << "Accept-Encoding: identity\r\n";
-		for (auto header : request.headers) {
-			ss << header.first << ": " << header.second << "\r\n";
-		}
-		ss << "\r\n";
-		ss << request.body;
-		return ss.str();
-	}
-	std::string str(Response& responce) {
-		std::stringstream ss;
-		ss << "HTTP/1.1 " << responce.Status_code() << "\n\r";
+		ss << fin.rdbuf();
+		
+		File result;
+		result.filename = filename;
+		result.propertyname = propertyname;
+		result.filecontent = ss.str();
 
-		for (auto& headers : responce.headers) {
-			for (auto header : headers.second)
-				ss << headers.first << ": " << header << "\n\r";
-		}
-		ss << "\n\r";
-		ss << responce.Body();
-		return ss.str();
+		return result;
 	}
+
+	File File::from_uri(std::string const & propertyname, std::string const &  filename,  std::string const & path)
+	{
+		File result;
+
+		result.filecontent = http::get(path).body;
+		result.propertyname = propertyname;
+		result.filename = filename;
+
+		return result;
+	}
+
+	File File::from_memory(std::string const & propertyname, std::string const & filename, std::string const & src)
+	{
+		File result;
+		result.propertyname = propertyname;
+		result.filename = filename;
+		result.filecontent = src;
+		return result;
+	}
+
 }

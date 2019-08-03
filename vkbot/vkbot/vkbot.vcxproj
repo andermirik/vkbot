@@ -134,7 +134,7 @@
     <ClCompile Include="html_parser\Selector.cpp" />
     <ClCompile Include="http\http.cpp" />
     <ClCompile Include="http\request.cpp" />
-    <ClCompile Include="http\responce.cpp" />
+    <ClCompile Include="http\response.cpp" />
     <ClCompile Include="http\uri.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugins\plugin_34.cpp" />
@@ -143,6 +143,7 @@
     <ClCompile Include="plugins\plugin_f.cpp" />
     <ClCompile Include="plugins\plugin.cpp" />
     <ClCompile Include="plugins\plugin_meme.cpp" />
+    <ClCompile Include="plugins\plugin_random_cats.cpp" />
     <ClCompile Include="plugins\plugin_search.cpp" />
     <ClCompile Include="plugins\plugin_stat.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -157,8 +158,9 @@
     <ClInclude Include="html_parser\Selection.h" />
     <ClInclude Include="html_parser\Selector.h" />
     <ClInclude Include="http\http.h" />
+    <ClInclude Include="http\mime.h" />
     <ClInclude Include="http\request.h" />
-    <ClInclude Include="http\responce.h" />
+    <ClInclude Include="http\response.h" />
     <ClInclude Include="http\uri.h" />
     <ClInclude Include="plugins\plugin_34.h" />
     <ClInclude Include="plugins\plugin_call_all.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="plugins\plugin_f.h" />
     <ClInclude Include="plugins\plugins.h" />
     <ClInclude Include="plugins\plugin.h" />
+    <ClInclude Include="plugins\plugin_random_cats.h" />
     <ClInclude Include="plugins\plugin_search.h" />
     <ClInclude Include="plugins\plugin_stat.h" />
     <ClInclude Include="Utils.h" />

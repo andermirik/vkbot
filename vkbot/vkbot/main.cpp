@@ -1,8 +1,5 @@
 #include "http/http.h"
-#include <nlohmann/json.hpp>
-
 #include "plugins/plugins.h"
-#include "Utils.h"
 
 #include "windows.h"
 
@@ -17,13 +14,13 @@ using json = nlohmann::json;
 std::string call_sinkin_api(std::string text) {
 	if (text != "" && text!="%5c") {
 		auto resp = http::get("https://isinkin-bot-api.herokuapp.com/1/talk?q=" + text);
-		if (resp.Status_code() == 200) {
-			std::string answer = json::parse(resp.Body())["text"].get<std::string>();
+		if (resp.status_code == 200) {
+			std::string answer = json::parse(resp.body)["text"].get<std::string>();
 			return answer;
 		}
 		else {
 			std::cout << text<<std::endl;
-			return u8"@isinkin(Синкин) обосрался: " + std::to_string(resp.Status_code());
+			return u8"@isinkin(Синкин) обосрался: " + std::to_string(resp.status_code);
 		}
 	}
 	return "";
@@ -98,8 +95,6 @@ int main() {
 	system("cls");
 	setlocale(LC_ALL, "rus");
 	
-//	vk::upload_document_by_url("https://img.rule34.xxx/images/2134/b5dca30e9dedac907f4d9b8ebb10aaf5.gif", 2000000001);
-
 	std::string token;
 	std::ifstream fin("config/apikey.txt");
 	fin >> token;
@@ -116,6 +111,7 @@ int main() {
 	for (int i = 0; i < count_wokers; i++) {
 		workers.push_back(std::thread([&updates, &mutex, i]() {
 			PluginManager mgr;
+			srand(time(0));
 			while (true) {
 				json update = nullptr;
 				mutex.lock();
@@ -140,10 +136,10 @@ int main() {
 			+ "&ts=" + std::to_string(ts)
 			+ "&wait=25"
 		);
-		if (resp.Body() == "")
+		if (resp.body == "")
 			continue;
 
-		json response = json::parse(resp.Body());
+		json response = json::parse(resp.body);
 
 		std::string error = vk::failed(response, lpg, ts);
 		if (error != "") {

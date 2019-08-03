@@ -1,4 +1,4 @@
-#include "responce.h"
+#include "response.h"
 #include <sstream>
 
 http::Response::Response() {
@@ -20,12 +20,12 @@ void http::Response::fromString(std::string& src) {
 	for (line; safeGetline(str, line) && line!="";) {
 		std::string header = line.substr(0, line.find(':'));
 		std::string value = line.substr(line.find(' ')+1);
-		headers[header].push_back(value);
+		headers[header] = value;
 	}
 
 	bool chunked = false;
 	if (!headers["Transfer-Encoding"].empty())
-		if(headers["Transfer-Encoding"][0]=="chunked")
+		if(headers["Transfer-Encoding"]=="chunked")
 			chunked = true;
 
 	int body_offset = src.find("\r\n\r\n") + 4;
@@ -76,20 +76,14 @@ std::istream& http::Response::safeGetline(std::istream& is, std::string& t)
 std::string http::Response::to_string()
 {
 	std::stringstream ss;
-	ss << "HTTP/1.1 " << Status_code() << "\n\r";
+	ss << "HTTP/1.1 " << status_code << "\n\r";
 
 	for (auto& headers : headers) {
 		for (auto header : headers.second)
 			ss << headers.first << ": " << header << "\n\r";
 	}
 	ss << "\n\r";
-	ss << Body();
+	ss << body;
 	return ss.str();
 }
 
-int http::Response::Status_code() {
-	return status_code;
-}
-std::string http::Response::Body() {
-	return body;
-}

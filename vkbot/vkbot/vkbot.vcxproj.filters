@@ -45,9 +45,6 @@
     <ClCompile Include="http\request.cpp">
       <Filter>Исходные файлы\http</Filter>
     </ClCompile>
-    <ClCompile Include="http\responce.cpp">
-      <Filter>Исходные файлы\http</Filter>
-    </ClCompile>
     <ClCompile Include="http\uri.cpp">
       <Filter>Исходные файлы\http</Filter>
     </ClCompile>
@@ -105,15 +102,18 @@
     <ClCompile Include="plugins\plugin_34.cpp">
       <Filter>Исходные файлы\plugins</Filter>
     </ClCompile>
+    <ClCompile Include="plugins\plugin_random_cats.cpp">
+      <Filter>Исходные файлы\plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="http\response.cpp">
+      <Filter>Исходные файлы\http</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="http\http.h">
       <Filter>Файлы заголовков\http</Filter>
     </ClInclude>
     <ClInclude Include="http\request.h">
-      <Filter>Файлы заголовков\http</Filter>
-    </ClInclude>
-    <ClInclude Include="http\responce.h">
       <Filter>Файлы заголовков\http</Filter>
     </ClInclude>
     <ClInclude Include="http\uri.h">
@@ -172,6 +172,15 @@
     </ClInclude>
     <ClInclude Include="plugins\plugin_34.h">
       <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="plugins\plugin_random_cats.h">
+      <Filter>Файлы заголовков\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="http\response.h">
+      <Filter>Файлы заголовков\http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\mime.h">
+      <Filter>Файлы заголовков\http</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
