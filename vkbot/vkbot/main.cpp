@@ -26,7 +26,7 @@ std::string call_sinkin_api(std::string text) {
 	return "";
 }
 
-std::vector<std::string> bot_names = {"ня", "десу", "nya", "desu", "[club184605473|@nyadesubot]", "/"};
+std::vector<std::string> bot_names = {"ми", "мика", "mi", "mika", "[club184605473|@just_mika_public]", "/"};
 
 bool have_bot_name(std::string text) {
 	text = to_lower(text);
@@ -63,9 +63,16 @@ void process_update(json& update, PluginManager& mgr, int worker_id) {
 			std::cout << text << std::endl;
 		}
 		
+		
+
 		auto words = split(text, ' ');
 
 		bool smth_worked = false;
+		if (words.size() > 1 && words[1] == "помощь") {
+			vk::apisay(urlencode(u8"что - что изображено на картинке\nстат - статистика бота\nпозови всех - позвать всех\nкотик - случайный котик"), std::to_string(peer_id));
+			smth_worked = true;
+		}
+
 		for (auto& plugin : mgr.plugins) {
 			if (plugin.second.get()->must_be_private() == for_me || plugin.second.get()->must_be_private() == false) {
 				for (auto& command : plugin.second.get()->command) {

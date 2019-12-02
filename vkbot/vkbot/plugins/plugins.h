@@ -21,6 +21,6 @@ public:
 		plugins["meme"] = std::make_unique<MemePlugin>(MemePlugin({ { "" } }, CallArea::Any));
 		plugins["what"] = std::make_unique<SearchPlugin>(SearchPlugin({ { "что" }, {"what"} }, CallArea::Me));
 		plugins["34"] = std::make_unique<Rule34Plugin>(Rule34Plugin({ { "34" }, {"r34"}, {"rule34"} }, CallArea::Me));
-		plugins["cats"] = std::make_unique<RandCatsPlugin>(RandCatsPlugin({ { "кот" }, { "cat" } }, CallArea::Me));
+		plugins["cats"] = std::make_unique<RandCatsPlugin>(RandCatsPlugin({ { "котик" }, { "cat" } }, CallArea::Me));
 	}
 };
